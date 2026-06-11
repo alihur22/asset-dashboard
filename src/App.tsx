@@ -33,6 +33,7 @@ import {
   type DateFormat,
 } from "./dataUtils";
 import { fetchSheetAsCsv, type SheetConfig } from "./sheetApi";
+import ReportsPanel from "./ReportsPanel";
 import "./App.css";
 
 /** Change this to your desired PIN, or set VITE_APP_PIN when building (e.g. VITE_APP_PIN=1234 npm run build) */
@@ -162,6 +163,7 @@ function App() {
   );
   const [sheetConfig, setSheetConfig] = useState<SheetConfig>(loadSheetConfig);
   const [sheetConfigOpen, setSheetConfigOpen] = useState(false);
+  const [mainView, setMainView] = useState<"dashboard" | "reports">("dashboard");
   const dashboardRef = useRef<HTMLDivElement>(null);
   const overviewRef = useRef<HTMLDivElement>(null);
   const moversRef = useRef<HTMLDivElement>(null);
@@ -663,6 +665,44 @@ function App() {
 
       {csvContent && (
       <>
+      <div className="month-select month-select-global">
+        <label className="control-label">
+          Month
+          <select
+            value={currentMonth || ""}
+            onChange={(e) => setSelectedMonth(e.target.value || null)}
+            className="month-dropdown"
+          >
+            {filteredSnapshots.map((s) => (
+              <option key={s.monthKey} value={s.monthKey}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="main-view-tabs">
+        <button type="button" className={mainView === "dashboard" ? "active" : ""} onClick={() => setMainView("dashboard")}>
+          Dashboard
+        </button>
+        <button type="button" className={mainView === "reports" ? "active" : ""} onClick={() => setMainView("reports")}>
+          Reports
+        </button>
+      </div>
+
+      {mainView === "reports" ? (
+        <ReportsPanel
+          snapshots={filteredSnapshots}
+          currentMonth={currentMonth}
+          currentSnapshot={currentSnapshot}
+          theme={theme}
+          formatValue={(v) => formatValue(v, currencyMode, usdPkrRate)}
+          formatValueShort={(v) => formatValueShort(v, currencyMode, usdPkrRate)}
+          convert={(v) => convertForDisplay(v, currencyMode, usdPkrRate)}
+        />
+      ) : (
+      <>
       <div className="controls-wrapper">
         <button
           type="button"
@@ -720,23 +760,6 @@ function App() {
           Missing data for: {missingMonths.map((m) => m.replace("-", " ")).join(", ")}
         </div>
       )}
-
-      <div className="month-select">
-        <label className="control-label">
-          Month
-          <select
-            value={currentMonth || ""}
-            onChange={(e) => setSelectedMonth(e.target.value || null)}
-            className="month-dropdown"
-          >
-            {filteredSnapshots.map((s) => (
-              <option key={s.monthKey} value={s.monthKey}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
 
       <div className="compare-row">
         <label className="control-label">
@@ -1416,6 +1439,8 @@ function App() {
           </div>,
           document.body
         )}
+      </>
+      )}
       </>
       )}
     </div>

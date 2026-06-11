@@ -1312,3 +1312,202 @@
     grid-column: 1 / -1;
   }
 }
+
+/* Reports panel */
+.main-view-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.main-view-tabs button {
+  background: var(--bg-panel);
+  border: 1px solid var(--accent-border);
+  color: var(--text-muted);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.main-view-tabs button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.month-select-global {
+  margin-bottom: 0.75rem;
+}
+
+.reports-panel {
+  margin-top: 0.5rem;
+}
+
+.reports-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reports-toolbar h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.reports-toolbar-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.report-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--accent-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.report-card-wide {
+  margin-bottom: 1rem;
+}
+
+.report-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.report-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.report-note {
+  font-size: 0.8rem;
+  margin: 0 0 0.75rem;
+}
+
+.scorecard-grid .scorecard-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.scorecard-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.scorecard-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.scorecard-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.concentration-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.report-table th,
+.report-table td {
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.report-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.report-table-scroll {
+  overflow-x: auto;
+}
+
+.sparkline-cell {
+  width: 90px;
+}
+
+.heatmap-wrap {
+  overflow-x: auto;
+}
+
+.heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+}
+
+.heatmap-table th,
+.heatmap-table td {
+  padding: 0.35rem 0.4rem;
+  border: 1px solid var(--accent-border);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.heatmap-account {
+  text-align: left !important;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heatmap-cell {
+  min-width: 52px;
+}
+
+.reports-empty {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+@media print {
+  .header-actions,
+  .main-view-tabs,
+  .month-select-global,
+  .reports-toolbar-actions,
+  .sheet-config-panel,
+  .controls-wrapper,
+  .warning-banner,
+  .btn-expand,
+  .btn-download-png {
+    display: none !important;
+  }
+
+  .monthly-report-wrap {
+    break-inside: avoid;
+  }
+
+  .report-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
