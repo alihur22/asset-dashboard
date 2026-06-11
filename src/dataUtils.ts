@@ -23,14 +23,11 @@ export interface MonthSnapshot {
 
 const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
-/** Account-specific asset class corrections (lowercase account name → class) */
-const ACCOUNT_ASSET_CLASS_OVERRIDES: Record<string, string> = {
-  "chase securities": "Equity",
-};
-
+/** Chase accounts: Securities = fixed income; stock / 10401 accounts = equity */
 function resolveAssetClass(account: string, assetClass: string): string {
-  const override = ACCOUNT_ASSET_CLASS_OVERRIDES[account.trim().toLowerCase()];
-  if (override) return override;
+  const name = account.trim().toLowerCase();
+  if (name.includes("chase securities")) return "Fixed Income";
+  if (name.includes("chase") && (name.includes("stock") || name.includes("10401"))) return "Equity";
   return (assetClass || "").trim() || "Other";
 }
 
