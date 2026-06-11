@@ -65,7 +65,8 @@ function isInternational(account: string, assetClass: string): boolean {
   const a = account.toLowerCase();
   const c = normClass(assetClass).toLowerCase();
   if (c.includes("dubai")) return true;
-  if (a.includes("adib") || a.includes("usa") || a.includes("chase") || a.includes("dubai")) return true;
+  if (a.includes("adib") || a.includes("usa") || a.includes("dubai")) return true;
+  if (a.includes("chase")) return true;
   return false;
 }
 
@@ -369,17 +370,44 @@ export function getIncomeVsCapital(snapshot: MonthSnapshot): PieSlice[] {
   return aggregateByKey(rows);
 }
 
-/** Heatmap helper for account × month */
+/** Accounts always shown on the heatmap (even if not in top N by size) */
+const HEATMAP_PINNED_PATTERNS = [/chase stock/i, /10401/i];
+
+function isHeatmapPinnedAccount(name: string): boolean {
+  return HEATMAP_PINNED_PATTERNS.some((p) => p.test(name));
+}
+
+function accountMaxValue(snapshots: MonthSnapshot[], account: string): number {
+  let max = 0;
+  for (const s of snapshots) {
+    for (const r of s.rows) {
+      if (r.account === account) max = Math.max(max, Math.abs(r.amountRs));
+    }
+  }
+  return max;
+}
+
+/** Heatmap: account × month. Ranks by peak month value; always includes pinned accounts (e.g. Chase stock). */
 export function getAccountHeatmapData(
   snapshots: MonthSnapshot[],
   limit = 12
 ): { account: string; values: { month: string; value: number }[] }[] {
-  const accountTotals = new Map<string, number>();
+  if (snapshots.length === 0) return [];
+
+  const allAccounts = new Set<string>();
   for (const s of snapshots) {
-    for (const r of s.rows) accountTotals.set(r.account, (accountTotals.get(r.account) ?? 0) + Math.abs(r.amountRs));
+    for (const r of s.rows) allAccounts.add(r.account);
   }
-  const topAccounts = [...accountTotals.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([a]) => a);
-  return topAccounts.map((account) => ({
+
+  const pinned = [...allAccounts].filter(isHeatmapPinnedAccount);
+  const ranked = [...allAccounts]
+    .filter((a) => !pinned.includes(a))
+    .sort((a, b) => accountMaxValue(snapshots, b) - accountMaxValue(snapshots, a))
+    .slice(0, limit);
+
+  const selected = [...pinned, ...ranked];
+
+  return selected.map((account) => ({
     account,
     values: snapshots.map((s) => {
       let val = 0;

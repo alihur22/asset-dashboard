@@ -180,7 +180,7 @@ export default function ReportsPanel({
     () => (currentSnapshot ? toDisplaySlices(getIncomeVsCapital(currentSnapshot), convert) : []),
     [currentSnapshot, convert]
   );
-  const heatmap = useMemo(() => getAccountHeatmapData(snapshots, 10), [snapshots]);
+  const heatmap = useMemo(() => getAccountHeatmapData(snapshots, 12), [snapshots]);
 
   const exportMonthlyReport = async () => {
     if (!monthlyReportRef.current) return;
@@ -521,7 +521,8 @@ export default function ReportsPanel({
         {/* Heatmap bonus */}
         {heatmap.length > 0 && (
           <div className="report-card report-card-wide">
-            <h3>Account Heatmap (top 10)</h3>
+            <h3>Account Heatmap</h3>
+            <p className="muted report-note">Top accounts by peak month value. Chase stock accounts always included.</p>
             <div className="heatmap-wrap">
               <table className="heatmap-table">
                 <thead>
@@ -538,7 +539,9 @@ export default function ReportsPanel({
                     const max = Math.max(...vals.map(Math.abs), 1);
                     return (
                       <tr key={row.account}>
-                        <td className="heatmap-account">{row.account.length > 14 ? row.account.slice(0, 12) + "…" : row.account}</td>
+                        <td className="heatmap-account" title={row.account}>
+                          {row.account.length > 18 ? row.account.slice(0, 16) + "…" : row.account}
+                        </td>
                         {row.values.map((v, i) => {
                           const val = vals[i];
                           const intensity = Math.min(1, Math.abs(val) / max);

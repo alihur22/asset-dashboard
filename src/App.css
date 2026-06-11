@@ -1474,7 +1474,7 @@
 
 .heatmap-account {
   text-align: left !important;
-  max-width: 100px;
+  max-width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
