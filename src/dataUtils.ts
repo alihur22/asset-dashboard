@@ -23,6 +23,17 @@ export interface MonthSnapshot {
 
 const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
+/** Account-specific asset class corrections (lowercase account name → class) */
+const ACCOUNT_ASSET_CLASS_OVERRIDES: Record<string, string> = {
+  "chase securities": "Equity",
+};
+
+function resolveAssetClass(account: string, assetClass: string): string {
+  const override = ACCOUNT_ASSET_CLASS_OVERRIDES[account.trim().toLowerCase()];
+  if (override) return override;
+  return (assetClass || "").trim() || "Other";
+}
+
 function parseMonth(value: string): number | null {
   const v = (value || "").trim().toLowerCase();
   const n = parseInt(v, 10);
@@ -108,7 +119,7 @@ export function parseCsv(content: string, dateFormat: DateFormat = "mmddyyyy"): 
     const amountStr = (parts[amountIdx] || "0").replace(/,/g, "").trim();
     const amountRs = parseFloat(amountStr) || 0;
     const amountMillions = millionsIdx >= 0 ? parseFloat((parts[millionsIdx] || "0").replace(/,/g, "")) || 0 : amountRs / 1e6;
-    const assetClass = (parts[assetIdx] ?? "").toString().trim() || "Other";
+    const assetClass = resolveAssetClass(parts[accountIdx] || "", (parts[assetIdx] ?? "").toString());
     rows.push({
       date: `${parsed.year}-${String(parsed.month).padStart(2, "0")}-${String(parsed.day).padStart(2, "0")}`,
       account: (parts[accountIdx] || "").trim(),
